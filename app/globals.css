@@ -1,0 +1,112 @@
+:root {
+  --or: #C8841A;
+  --or-light: #FAEEDA;
+  --or-dark: #854F0B;
+  --feu: #E85D24;
+  --terre: #7B3F1A;
+  --bg: #FFFDF8;
+  --bg2: #F7F0E6;
+  --text: #1a1a1a;
+  --text2: #5a4a3a;
+  --card-bg: #ffffff;
+  --border: rgba(200, 132, 26, 0.2);
+  --nav-bg: #1a1a1a;
+  --wa: #25D366;
+  --radius: 10px;
+}
+
+[data-theme="dark"] {
+  --bg: #1a1510;
+  --bg2: #251e16;
+  --text: #f5ead8;
+  --text2: #c4a882;
+  --card-bg: #2a2018;
+  --border: rgba(200, 132, 26, 0.3);
+  --nav-bg: #0f0d0a;
+  --or-light: #2a1e0a;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  transition: background 0.3s, color 0.3s;
+}
+
+a { text-decoration: none; color: inherit; }
+
+button { cursor: pointer; font-family: inherit; }
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--or);
+}
+
+.btn-or {
+  background: var(--or);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.btn-or:hover { background: var(--or-dark); }
+
+.btn-feu {
+  background: var(--feu);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--or);
+  border: 2px solid var(--or);
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.wa-btn {
+  width: 100%;
+  background: var(--wa);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
