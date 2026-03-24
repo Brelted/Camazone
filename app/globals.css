@@ -110,3 +110,47 @@ input:focus, select:focus, textarea:focus {
   font-weight: 700;
   font-size: 0.9rem;
 }
+
+/* ── Responsive mobile ── */
+
+@media (max-width: 768px) {
+
+  /* Navbar */
+  nav {
+    padding: 0.6rem 1rem !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Hero */
+  section {
+    padding: 2rem 1rem !important;
+  }
+
+  /* Grilles produits → 2 colonnes sur mobile */
+  div[style*="auto-fill"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Stats vendeur → 1 colonne */
+  div[style*="repeat(3,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Formulaire prix/stock → 1 colonne */
+  div[style*="1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Titre hero plus petit */
+  h1[style*="2.8rem"] {
+    font-size: 2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Grilles produits → 1 colonne sur très petit écran */
+  div[style*="auto-fill"] {
+    grid-template-columns: 1fr !important;
+  }
+}

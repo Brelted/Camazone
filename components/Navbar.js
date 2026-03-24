@@ -88,27 +88,33 @@ export default function Navbar() {
 
 const navStyle = {
   display: 'flex', justifyContent: 'space-between',
-  alignItems: 'center', padding: '0.8rem 2rem',
+  alignItems: 'center', padding: '0.8rem 1.2rem',
   background: '#1a1a1a', borderBottom: '3px solid #C8841A',
   position: 'sticky', top: 0, zIndex: 100,
+  flexWrap: 'wrap', gap: '0.5rem',
 }
-const linkStyle = { color: '#c4a882', textDecoration: 'none', fontSize: '0.9rem' }
+const linkStyle = {
+  color: '#c4a882', textDecoration: 'none',
+  fontSize: '0.85rem', whiteSpace: 'nowrap',
+}
 const btnStyle = {
-  padding: '0.45rem 1rem', background: '#C8841A',
+  padding: '0.4rem 0.8rem', background: '#C8841A',
   color: 'white', borderRadius: '6px',
-  textDecoration: 'none', fontSize: '0.85rem', fontWeight: '700'
+  textDecoration: 'none', fontSize: '0.8rem', fontWeight: '700',
+  whiteSpace: 'nowrap',
 }
 const logoutStyle = {
-  padding: '0.45rem 1rem', background: 'transparent',
+  padding: '0.4rem 0.8rem', background: 'transparent',
   color: '#E85D24', border: '1px solid #E85D24',
-  borderRadius: '6px', fontSize: '0.85rem'
+  borderRadius: '6px', fontSize: '0.8rem', whiteSpace: 'nowrap',
 }
 const langStyle = {
   background: 'transparent', border: '1px solid #C8841A',
   color: '#C8841A', borderRadius: '6px',
-  padding: '0.3rem 0.6rem', fontSize: '0.8rem'
+  padding: '0.3rem 0.5rem', fontSize: '0.75rem',
+  whiteSpace: 'nowrap',
 }
 const themeStyle = {
   background: 'transparent', border: 'none',
-  fontSize: '1.1rem', cursor: 'pointer'
+  fontSize: '1rem', cursor: 'pointer',
 }
