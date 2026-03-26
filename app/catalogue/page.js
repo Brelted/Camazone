@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { supabase, formatWhatsApp } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { useTheme } from '@/lib/ThemeContext'
 import { t } from '@/lib/translations'
 
@@ -34,14 +34,12 @@ export default function Catalogue() {
   })
 
   const ouvrirWhatsApp = (produit) => {
-    const numero = formatWhatsApp(produit.users?.whatsapp)
-    if (!numero) return
     const msg = encodeURIComponent(
       lang === 'fr'
         ? `Bonjour ! Je suis intéressé(e) par : *${produit.nom}* à ${produit.prix.toLocaleString()} FCFA. Est-il disponible ?`
         : `Hello! I'm interested in: *${produit.nom}* at ${produit.prix.toLocaleString()} FCFA. Is it available?`
     )
-    window.open(`https://wa.me/${numero}?text=${msg}`, '_blank')
+    window.open(`https://wa.me/${produit.users?.whatsapp}?text=${msg}`, '_blank')
   }
 
   if (chargement) return (
