@@ -70,9 +70,9 @@ export default function HomeClient({ produits, categories }) {
                 <p style={catLabelStyle}>{produit.categories?.nom}</p>
                 <h3 style={cardNameStyle}>{produit.nom}</h3>
                 <p style={cardPriceStyle}>{produit.prix.toLocaleString()} FCFA</p>
-                <button onClick={() => ouvrirWhatsApp(produit)} style={waBtnStyle}>
-                  {tx.catalogue.contacter}
-                </button>
+                <button onClick={(e) => { e.preventDefault(); ouvrirWhatsApp(produit) }} style={waBtnStyle}>
+  {tx.contacter}
+</button>
               </div>
             </div>
           ))}

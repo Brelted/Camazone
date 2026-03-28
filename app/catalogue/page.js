@@ -96,7 +96,7 @@ export default function Catalogue() {
       ) : (
         <div style={gridStyle}>
           {produitsFiltres.map(produit => (
-            <div key={produit.id} style={cardStyle}>
+            <a key={produit.id} href={`/produit/${produit.id}`} style={{ ...cardStyle, textDecoration: 'none' }}>
               {/* Barre dorée */}
               <div style={{ height: '3px', background: '#C8841A' }} />
 
@@ -120,11 +120,11 @@ export default function Catalogue() {
                 <p style={priceStyle}>
                   {produit.prix.toLocaleString()} FCFA
                 </p>
-                <button onClick={() => ouvrirWhatsApp(produit)} style={waBtnStyle}>
-                  {tx.contacter}
-                </button>
+                <button onClick={(e) => { e.preventDefault(); ouvrirWhatsApp(produit) }} style={waBtnStyle}>
+  {tx.contacter}
+</button>
               </div>
-            </div>
+          </a>
           ))}
         </div>
       )}
