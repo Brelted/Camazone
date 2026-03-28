@@ -194,6 +194,11 @@ export default function Navbar() {
                   <button onClick={() => naviguer('/favoris')} style={menuItemStyle('#c4a882')}>
                     ⭐ {lang === 'fr' ? 'Mes favoris' : 'My favorites'}
                   </button>
+                  {role?.role === 'vendeur' && (
+  <button onClick={() => naviguer('/vendeur/dashboard')} style={menuItemStyle('#C8841A')}>
+    📊 {lang === 'fr' ? 'Mon dashboard' : 'My dashboard'}
+  </button>
+)}
                 </>
               ) : (
                 <>
