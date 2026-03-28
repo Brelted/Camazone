@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@/lib/ThemeContext'
@@ -10,34 +10,65 @@ export default function Profil() {
   const [form, setForm] = useState({ nom: '', whatsapp: '' })
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('')
+  const [avatar, setAvatar] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [chargement, setChargement] = useState(true)
   const [sauvegarde, setSauvegarde] = useState(false)
   const [message, setMessage] = useState('')
+  const fileRef = useRef(null)
 
   useEffect(() => {
     const charger = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/connexion'); return }
+      setUserId(user.id)
       const { data } = await supabase
         .from('users').select('*').eq('id', user.id).single()
       if (data) {
         setForm({ nom: data.nom || '', whatsapp: data.whatsapp || '' })
         setEmail(user.email)
         setRole(data.role)
+        setAvatarPreview(data.avatar || null)
       }
       setChargement(false)
     }
     charger()
   }, [])
 
+  const handleAvatar = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setAvatar(file)
+    setAvatarPreview(URL.createObjectURL(file))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSauvegarde(true)
-    const { data: { user } } = await supabase.auth.getUser()
+    let avatarUrl = avatarPreview
+
+    // Upload nouvelle photo si changée
+    if (avatar) {
+      const nomFichier = `${userId}-${Date.now()}-${avatar.name}`
+      const { error: uploadError } = await supabase.storage
+        .from('photos-profil')
+        .upload(nomFichier, avatar)
+
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage
+          .from('photos-profil')
+          .getPublicUrl(nomFichier)
+        avatarUrl = urlData.publicUrl
+      }
+    }
+
     await supabase.from('users').update({
       nom: form.nom,
       whatsapp: form.whatsapp,
-    }).eq('id', user.id)
+      avatar: avatarUrl,
+    }).eq('id', userId)
+
     setMessage(lang === 'fr' ? '✅ Profil mis à jour !' : '✅ Profile updated!')
     setSauvegarde(false)
     setTimeout(() => setMessage(''), 3000)
@@ -52,17 +83,39 @@ export default function Profil() {
   return (
     <main style={pageStyle}>
 
-      {/* En-tête */}
+      {/* En-tête avec avatar */}
       <div style={headerStyle}>
-        <div style={avatarStyle}>
-          {form.nom?.charAt(0)?.toUpperCase() || '?'}
+        <div style={avatarZoneStyle} onClick={() => fileRef.current.click()}>
+          {avatarPreview ? (
+            <img src={avatarPreview} alt="avatar"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <span style={{ fontSize: '2rem', color: 'white' }}>
+              {form.nom?.charAt(0)?.toUpperCase() || '?'}
+            </span>
+          )}
+          {/* Overlay modifier */}
+          <div style={avatarOverlayStyle}>
+            <span style={{ fontSize: '1.2rem' }}>📷</span>
+          </div>
         </div>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          onChange={handleAvatar}
+          style={{ display: 'none' }}
+        />
         <div>
           <h1 style={titleStyle}>{form.nom}</h1>
           <p style={{ color: 'var(--text2)', fontSize: '0.9rem' }}>
             {email} · {role === 'vendeur'
               ? (lang === 'fr' ? 'Vendeur' : 'Seller')
               : (lang === 'fr' ? 'Acheteur' : 'Buyer')}
+          </p>
+          <p style={{ fontSize: '0.8rem', color: '#C8841A', marginTop: '0.3rem', cursor: 'pointer' }}
+            onClick={() => fileRef.current.click()}>
+            {lang === 'fr' ? '📷 Changer la photo' : '📷 Change photo'}
           </p>
         </div>
       </div>
@@ -86,7 +139,8 @@ export default function Profil() {
 
         <div style={fieldStyle}>
           <label style={labelStyle}>Email</label>
-          <input value={email} disabled style={{ opacity: 0.6, cursor: 'not-allowed' }} />
+          <input value={email} disabled
+            style={{ opacity: 0.6, cursor: 'not-allowed' }} />
           <p style={{ fontSize: '0.75rem', color: 'var(--text2)', marginTop: '0.3rem' }}>
             {lang === 'fr' ? "L'email n'est pas modifiable" : 'Email cannot be changed'}
           </p>
@@ -103,9 +157,7 @@ export default function Profil() {
           />
         </div>
 
-        {message && (
-          <div style={messageStyle}>{message}</div>
-        )}
+        {message && <div style={messageStyle}>{message}</div>}
 
         <button type="submit" disabled={sauvegarde} style={submitStyle}>
           {sauvegarde
@@ -114,18 +166,22 @@ export default function Profil() {
         </button>
       </form>
 
-      {/* Lien vers mes produits si vendeur */}
+      {/* Espace vendeur */}
       {role === 'vendeur' && (
         <div style={vendeurCardStyle}>
           <h2 style={sectionTitleStyle}>
             {lang === 'fr' ? '🛍️ Espace vendeur' : '🛍️ Seller space'}
           </h2>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <a href="/vendeur/dashboard" style={linkBtnStyle}>
+              📊 Dashboard
+            </a>
             <a href="/vendeur/mes-produits" style={linkBtnStyle}>
               📋 {lang === 'fr' ? 'Mes produits' : 'My products'}
             </a>
-            <a href="/vendeur/ajouter-produit" style={{ ...linkBtnStyle, background: '#E85D24' }}>
-              ➕ {lang === 'fr' ? 'Ajouter un produit' : 'Add a product'}
+            <a href="/vendeur/ajouter-produit"
+              style={{ ...linkBtnStyle, background: '#E85D24' }}>
+              ➕ {lang === 'fr' ? 'Ajouter' : 'Add'}
             </a>
           </div>
         </div>
@@ -136,20 +192,26 @@ export default function Profil() {
 
 const pageStyle = { maxWidth: '600px', margin: '0 auto', padding: '2rem' }
 const headerStyle = {
-  display: 'flex', alignItems: 'center', gap: '1rem',
+  display: 'flex', alignItems: 'center', gap: '1.5rem',
   marginBottom: '2rem', padding: '1.5rem',
   background: 'var(--card-bg)', border: '1px solid var(--border)',
   borderRadius: '12px', borderTop: '4px solid #C8841A',
 }
-const avatarStyle = {
-  width: '60px', height: '60px', borderRadius: '50%',
-  background: '#C8841A', color: 'white',
+const avatarZoneStyle = {
+  width: '80px', height: '80px', borderRadius: '50%',
+  background: '#C8841A', overflow: 'hidden',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  fontSize: '1.5rem', fontWeight: '700', flexShrink: 0,
+  cursor: 'pointer', position: 'relative', flexShrink: 0,
+  border: '3px solid #E85D24',
+}
+const avatarOverlayStyle = {
+  position: 'absolute', bottom: 0, left: 0, right: 0,
+  background: 'rgba(0,0,0,0.5)', display: 'flex',
+  alignItems: 'center', justifyContent: 'center',
+  height: '30px',
 }
 const titleStyle = {
-  fontFamily: 'Georgia,serif', fontSize: '1.3rem',
-  color: 'var(--or-dark)',
+  fontFamily: 'Georgia,serif', fontSize: '1.3rem', color: 'var(--or-dark)',
 }
 const formStyle = {
   background: 'var(--card-bg)', border: '1px solid var(--border)',

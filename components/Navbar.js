@@ -22,7 +22,7 @@ export default function Navbar() {
       if (user) {
         setUser(user)
         const { data } = await supabase
-          .from('users').select('role, nom, email').eq('id', user.id).single()
+          .from('users').select('role, nom, email, avatar').eq('id', user.id).single()
         setRole(data)
       }
     }
@@ -91,7 +91,15 @@ export default function Navbar() {
 
           {/* Bouton Profil */}
           <button style={iconBtnStyle} onClick={() => toggleMenu('profile')}>
-            👤
+            {role?.avatar ? (
+              <img
+                src={role.avatar}
+                alt="Avatar"
+                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+              />
+            ) : (
+              '👤'
+            )}
           </button>
 
           {/* ── Menu Paramètres ── */}
